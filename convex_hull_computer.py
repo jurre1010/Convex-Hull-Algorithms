@@ -14,6 +14,10 @@ class Point:
     def __str__(self):
         return "(% s, % s)" % (self.x, self.y)
 
+    def __sub__(self, other):
+        return Point(self.x - other.x, self.y-other.y)
+
+
 def generate_points(n, a, d):
     points = []
     for i in range(n):
@@ -144,30 +148,20 @@ def convex_hull(points):
     return sorted_points, points_on_convex_hull
 
 def check_convex_hull(points, points_on_convex_hull):
-    # check if the points on the convex hull are from the points of the input set
-    j = len(points) - 1
-    n = len(points_on_convex_hull)
-    for i in range(len(points_on_convex_hull) - 1):
-        while points_on_convex_hull[n - i - 1] != points[j]:
-            points.pop()
-            j = j - 1
-        points_on_convex_hull.pop()
-        points.pop()
-        j = j - 1
-    check_points_from_set = len(points_on_convex_hull) == 1 and len(points) == 0
+    check_points_from_set = len(points_on_convex_hull) == (len([p for p in points_on_convex_hull if p in points]))
 
     # check if all points from the original set are to the right
     check = True
-    for i in range(len(points_on_convex_hull)):
-        for j in range(len(points)):
-            check = check and orientation(points_on_convex_hull[i], points_on_convex_hull[i+1], points[j]) == 1
+    for i in range(len(points_on_convex_hull) - 1):
+        for p in [p for p in points if p not in points_on_convex_hull]:
+            check = check and orientation(points_on_convex_hull[i], points_on_convex_hull[i+1], p) == 1
 
     return check_points_from_set and check
 
 def main():
     points = generate_points(10, 10, 1)
     sorted_points, points_on_convex_hull = convex_hull(points)
-    print(check_convex_hull(list(reversed(sorted_points)), copy(points_on_convex_hull)))
+    print(check_convex_hull(list(reversed(sorted_points)), points_on_convex_hull))
     show_points(points, 10, points_on_convex_hull)
 
 if __name__== "__main__":
