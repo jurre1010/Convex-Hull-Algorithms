@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 from random import random
 from functools import cmp_to_key
 
@@ -27,6 +26,8 @@ def show_points(points, a):
         x.append(points[i].x)
         y.append(points[i].y)
     plt.scatter(x, y)
+    plt.xlim(0, a)
+    plt.ylim(0, a)
     plt.show()
 
 p0 = Point(0, 0)
@@ -132,24 +133,32 @@ def convex_hull(points):
     
     return sorted_points, points_on_convex_hull
 
-def check_convex_hull(chpoints, points):
-    check = False
-
-    # points are from the original set
-    # all points from the original set are to the right
-    # all angles are to the right
-    return check
+def check_convex_hull(points, points_on_convex_hull):
+    # check if the points on the convex hull are from the points of the input set
+    j = len(points) - 1
+    n = len(points_on_convex_hull)
+    for i in range(len(points_on_convex_hull) - 1):
+        while points_on_convex_hull[n - i - 1] != points[j]:
+            points.pop()
+            j = j - 1
+        points_on_convex_hull.pop()
+        points.pop()
+        j = j - 1
+    check_points_from_set = len(points_on_convex_hull) == 1 and len(points) == 0
+    
+    # check if all points from the original set are to the right
+    check = True
+    for i in range(len(points_on_convex_hull)):
+        for j in range(len(points)):
+            check = check and orientation(points_on_convex_hull[i], points_on_convex_hull[i+1], points[j]) == 1
+    
+    return check_points_from_set and check
 
 def main():
-    points = generate_points(10, 10, 2)
-    print(points)
+    points = generate_points(10, 10, 1)
     sorted_points, points_on_convex_hull = convex_hull(points)
-    print(sorted_points)
-    print(points_on_convex_hull)
+    print(check_convex_hull(list(reversed(sorted_points)), points_on_convex_hull))
     show_points(points, 10)
-    # show_points(convex_hull(points))
-    # check_convex_hull(points, convex_hull(points))
-
 
 if __name__== "__main__":
     main()
