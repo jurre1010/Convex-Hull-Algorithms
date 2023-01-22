@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from copy import copy
 from random import random
 from functools import cmp_to_key
 
@@ -8,10 +9,10 @@ class Point:
         self.y = y
 
     def __repr__(self):
-        return "\n (% s, % s)" % (self.x, self.y) 
-    
-    def __str__(self): 
-        return "(% s, % s)" % (self.x, self.y) 
+        return "\n (% s, % s)" % (self.x, self.y)
+
+    def __str__(self):
+        return "(% s, % s)" % (self.x, self.y)
 
 def generate_points(n, a, d):
     points = []
@@ -19,7 +20,7 @@ def generate_points(n, a, d):
         points.append(Point(x = round(a * random(), ndigits=d), y = round(a * random(), ndigits=d)))
     return points
 
-def show_points(points, a):
+def show_points(points, a, hull_points):
     x = []
     y = []
     for i in range(len(points)):
@@ -28,6 +29,15 @@ def show_points(points, a):
     plt.scatter(x, y)
     plt.xlim(0, a)
     plt.ylim(0, a)
+
+    hx = []
+    hy = []
+    for i in hull_points:
+        hx.append(i.x)
+        hy.append(i.y)
+    plt.scatter(hx, hy, color="orange")
+    plt.plot(hx, hy, color="orange")
+
     plt.show()
 
 p0 = Point(0, 0)
@@ -76,11 +86,11 @@ def convex_hull(points):
         if ((y < ymin) or
             (ymin == y and points[i].x < points[minindex].x)):
             ymin = points[i].y
-            minindex = i    
+            minindex = i
 
     points[0], points[minindex] = points[minindex], points[0]
 
-    global p0 
+    global p0
     p0 = points[0]
 
     # bottom-most point appended to convex hull.
@@ -91,13 +101,13 @@ def convex_hull(points):
 
     m = 1  # Initialize size of modified array
     for i in range(1, n):
-        
+
         # Keep removing i while angle of i and i+1 is same
         # with respect to p0
         while ((i < n - 1) and
         (orientation(p0, sorted_points[i], sorted_points[i + 1]) == 0)):
             i += 1
-  
+
         sorted_points[m] = sorted_points[i]
         m += 1  # Update size of modified array
 
@@ -105,17 +115,17 @@ def convex_hull(points):
     # convex hull is not possible
     if m < 3:
         return
-  
+
     # Create an empty stack and push first three points
     # to it.
     S = []
     S.append(sorted_points[0])
     S.append(sorted_points[1])
     S.append(sorted_points[2])
-  
+
     # Process remaining n-3 points
     for i in range(3, m):
-        
+
         # Keep removing top while the angle formed by
         # points next-to-top, top, and points[i] makes
         # a non-left turn
@@ -130,7 +140,7 @@ def convex_hull(points):
         p = S[-1]
         points_on_convex_hull.append(p)
         S.pop()
-    
+
     return sorted_points, points_on_convex_hull
 
 def check_convex_hull(points, points_on_convex_hull):
@@ -145,23 +155,20 @@ def check_convex_hull(points, points_on_convex_hull):
         points.pop()
         j = j - 1
     check_points_from_set = len(points_on_convex_hull) == 1 and len(points) == 0
-    
+
     # check if all points from the original set are to the right
     check = True
     for i in range(len(points_on_convex_hull)):
         for j in range(len(points)):
             check = check and orientation(points_on_convex_hull[i], points_on_convex_hull[i+1], points[j]) == 1
-    
+
     return check_points_from_set and check
 
 def main():
     points = generate_points(10, 10, 1)
     sorted_points, points_on_convex_hull = convex_hull(points)
-    print(check_convex_hull(list(reversed(sorted_points)), points_on_convex_hull))
-    show_points(points, 10)
+    print(check_convex_hull(list(reversed(sorted_points)), copy(points_on_convex_hull)))
+    show_points(points, 10, points_on_convex_hull)
 
 if __name__== "__main__":
     main()
-
-
-
