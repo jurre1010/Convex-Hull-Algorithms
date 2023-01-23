@@ -1,4 +1,5 @@
 import json
+import time
 import matplotlib.pyplot as plt
 from copy import copy
 from random import random
@@ -175,18 +176,26 @@ def check_convex_hull(points, points_on_convex_hull):
         print(json.dumps(dmp))
 
     return check_points_from_set and check
-
 def main():
-    points = generate_points(10, 10, 1)
-
     # Error: orientation of point ((9.9, 9.3)) incorrect! Orientation: 2 with (9.8, 9.9) and (10.0, 5.2)
     # jss = r'[{"x": 0.7, "y": 0.1}, {"x": 8.4, "y": 7.7}, {"x": 7.7, "y": 9.3}, {"x": 3.4, "y": 6.1}, {"x": 6.6, "y": 6.5}, {"x": 5.6, "y": 0.8}, {"x": 7.2, "y": 5.8}, {"x": 0.5, "y": 9.7}, {"x": 7.2, "y": 0.8}, {"x": 1.9, "y": 1.7}, {"x": 6.4, "y": 7.8}, {"x": 6.5, "y": 6.9}, {"x": 4.1, "y": 1.6}, {"x": 9.2, "y": 0.6}, {"x": 5.5, "y": 3.3}, {"x": 9.9, "y": 9.3}, {"x": 2.6, "y": 7.1}, {"x": 6.5, "y": 5.2}, {"x": 9.5, "y": 3.3}, {"x": 2.1, "y": 3.0}, {"x": 2.3, "y": 8.9}, {"x": 1.0, "y": 7.0}, {"x": 6.2, "y": 9.0}, {"x": 10.0, "y": 5.2}, {"x": 3.5, "y": 7.7}, {"x": 9.0, "y": 1.4}, {"x": 9.8, "y": 7.4}, {"x": 8.6, "y": 7.9}, {"x": 1.1, "y": 1.5}, {"x": 0.7, "y": 4.2}, {"x": 8.0, "y": 4.3}, {"x": 2.4, "y": 1.1}, {"x": 3.7, "y": 10.0}, {"x": 4.4, "y": 9.6}, {"x": 8.3, "y": 6.5}, {"x": 3.0, "y": 8.8}, {"x": 5.2, "y": 6.6}, {"x": 9.3, "y": 4.6}, {"x": 3.5, "y": 0.2}, {"x": 2.6, "y": 4.0}, {"x": 0.1, "y": 1.1}, {"x": 3.0, "y": 1.3}, {"x": 4.0, "y": 5.5}, {"x": 2.9, "y": 0.8}, {"x": 1.4, "y": 2.5}, {"x": 1.5, "y": 1.1}, {"x": 4.4, "y": 1.8}, {"x": 9.8, "y": 9.9}, {"x": 9.1, "y": 6.6}, {"x": 5.5, "y": 4.9}, {"x": 4.4, "y": 8.3}, {"x": 4.9, "y": 7.3}, {"x": 6.2, "y": 3.3}, {"x": 6.8, "y": 4.1}, {"x": 5.4, "y": 2.4}, {"x": 9.2, "y": 4.7}, {"x": 1.8, "y": 0.1}, {"x": 5.2, "y": 3.9}, {"x": 4.8, "y": 2.6}, {"x": 9.5, "y": 5.3}, {"x": 6.5, "y": 8.0}, {"x": 9.5, "y": 8.3}, {"x": 8.4, "y": 9.1}, {"x": 9.6, "y": 6.3}, {"x": 6.4, "y": 6.6}, {"x": 1.1, "y": 4.2}, {"x": 1.6, "y": 6.6}, {"x": 5.8, "y": 7.2}, {"x": 1.2, "y": 9.5}, {"x": 8.8, "y": 6.4}, {"x": 6.0, "y": 0.6}, {"x": 7.6, "y": 2.2}, {"x": 2.0, "y": 7.3}, {"x": 4.5, "y": 3.2}, {"x": 3.0, "y": 8.4}, {"x": 2.0, "y": 8.4}, {"x": 8.4, "y": 1.8}, {"x": 8.8, "y": 5.3}, {"x": 2.1, "y": 3.9}, {"x": 8.4, "y": 4.3}, {"x": 9.6, "y": 1.2}, {"x": 5.8, "y": 3.4}, {"x": 0.0, "y": 6.6}, {"x": 4.3, "y": 9.0}, {"x": 8.0, "y": 2.5}, {"x": 2.0, "y": 0.7}, {"x": 6.0, "y": 8.9}, {"x": 1.5, "y": 5.2}, {"x": 1.6, "y": 6.6}, {"x": 9.5, "y": 1.4}, {"x": 1.0, "y": 1.2}, {"x": 4.1, "y": 4.1}, {"x": 0.0, "y": 4.8}, {"x": 4.2, "y": 2.8}, {"x": 7.9, "y": 0.5}, {"x": 6.4, "y": 1.4}, {"x": 2.0, "y": 2.3}, {"x": 7.5, "y": 1.4}, {"x": 7.2, "y": 1.4}, {"x": 0.5, "y": 4.2}]'
 
     # points = json.loads(jss, object_hook=lambda d:Point(d['x'], d['y']))
 
-    sorted_points, points_on_convex_hull = convex_hull(points)
-    print(check_convex_hull(list(reversed(sorted_points)), points_on_convex_hull))
-    show_points(points, 10, points_on_convex_hull)
+    n = 1000000
+    total_time = []
+    for _ in range(10):
+        points = generate_points(n, 1000000, 1)
+
+        start_time = time.time()
+        convex_hull(points)
+        run_time = time.time() - start_time
+
+        total_time.append(run_time)
+
+    average_time = sum(total_time)/len(total_time)
+    print("The total time average is: % s seconds" % round(average_time, ndigits=6))
+
 
 if __name__== "__main__":
     main()
