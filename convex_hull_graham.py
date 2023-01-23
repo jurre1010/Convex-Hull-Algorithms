@@ -182,7 +182,7 @@ def main():
 
     # points = json.loads(jss, object_hook=lambda d:Point(d['x'], d['y']))
 
-    n = 1000000
+    n = 1000
     total_time = []
     for _ in range(10):
         points = generate_points(n, 1000000, 1)

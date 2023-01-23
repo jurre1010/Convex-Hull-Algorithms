@@ -1,6 +1,6 @@
 import json
 from math import sqrt
-import convex_hull_computer as ch
+import convex_hull_graham as ch
 from copy import copy
 
 points_on_convex_hull = []
