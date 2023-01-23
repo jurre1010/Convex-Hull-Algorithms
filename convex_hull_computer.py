@@ -1,3 +1,4 @@
+import time
 import matplotlib.pyplot as plt
 from random import random
 from functools import cmp_to_key
@@ -15,7 +16,7 @@ class Point:
 
 def generate_points(n, a, d):
     points = []
-    for i in range(n):
+    for _ in range(n):
         points.append(Point(x = round(a * random(), ndigits=d), y = round(a * random(), ndigits=d)))
     return points
 
@@ -135,12 +136,14 @@ def convex_hull(points):
 
 def check_convex_hull(points, points_on_convex_hull):
     # check if the points on the convex hull are from the points of the input set
-    j = len(points) - 1
+    j = len(points)
     n = len(points_on_convex_hull)
     for i in range(len(points_on_convex_hull) - 1):
-        while points_on_convex_hull[n - i - 1] != points[j]:
+        while points_on_convex_hull[n - i - 1].x != points[j - 1].x or points_on_convex_hull[n - i - 1].y != points[j - 1].y:
+            print(j)
             points.pop()
             j = j - 1
+        print("HALLOW")
         points_on_convex_hull.pop()
         points.pop()
         j = j - 1
@@ -155,10 +158,19 @@ def check_convex_hull(points, points_on_convex_hull):
     return check_points_from_set and check
 
 def main():
-    points = generate_points(10, 10, 1)
-    sorted_points, points_on_convex_hull = convex_hull(points)
-    print(check_convex_hull(list(reversed(sorted_points)), points_on_convex_hull))
-    show_points(points, 10)
+    n = 1000000
+    total_time = []
+    for _ in range(10):
+        points = generate_points(n, 1000000, 1)
+
+        start_time = time.time()
+        convex_hull(points)
+        run_time = time.time() - start_time
+
+        total_time.append(run_time)
+
+    average_time = sum(total_time)/len(total_time)
+    print("The total time average is: % s seconds" % round(average_time, ndigits=6))
 
 if __name__== "__main__":
     main()
