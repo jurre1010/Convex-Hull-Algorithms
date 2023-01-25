@@ -182,19 +182,21 @@ def main():
 
     # points = json.loads(jss, object_hook=lambda d:Point(d['x'], d['y']))
 
-    n = 1000
-    total_time = []
-    for _ in range(10):
-        points = generate_points(n, 1000000, 1)
+    ns = [1000,2500,10000,25000,100000,250000,1000000]
+    # ns = [10, 100, 1000]
+    for n in ns:
+        total_time = []
+        for _ in range(10):
+            points = generate_points(n, 1000000, 1)
 
-        start_time = time.time()
-        convex_hull(points)
-        run_time = time.time() - start_time
+            start_time = time.time()
+            convex_hull(points)
+            run_time = time.time() - start_time
 
-        total_time.append(run_time)
+            total_time.append(run_time)
 
-    average_time = sum(total_time)/len(total_time)
-    print("The total time average is: % s seconds" % round(average_time, ndigits=6))
+        average_time = sum(total_time)/len(total_time)
+        print("For {} points, the total time average is: {} seconds".format(n, round(average_time, ndigits=6)))
 
 
 if __name__== "__main__":

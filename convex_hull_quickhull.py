@@ -1,5 +1,6 @@
 import json
 from math import sqrt
+import time
 import convex_hull_graham as ch
 from copy import copy
 
@@ -72,10 +73,27 @@ def main():
   #   quickhull(copy(points))
   #   check = ch.check_convex_hull(points, points_on_convex_hull)
 
-  points = ch.generate_points(100, 10, 1)
-  quickhull(copy(points))
+  # points = ch.generate_points(100, 10, 1)
+  # quickhull(copy(points))
 
-  ch.show_points(points, 10, points_on_convex_hull)
+  # ch.show_points(points, 10, points_on_convex_hull)
+
+  ns = [1000,2500,10000,25000,100000,250000,1000000]
+  # ns = [10, 100, 1000]
+  for n in ns:
+      total_time = []
+      for _ in range(10):
+          points = ch.generate_points(n, 1000000, 1)
+
+          start_time = time.time()
+          quickhull(points)
+          run_time = time.time() - start_time
+
+          total_time.append(run_time)
+
+      average_time = sum(total_time)/len(total_time)
+      print("For {} points, the total time average is: {} seconds".format(n, round(average_time, ndigits=6)))
+
 
 if __name__== "__main__":
     main()
